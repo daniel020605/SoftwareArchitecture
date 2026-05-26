@@ -1,0 +1,8 @@
+{
+  "teamName": "",
+  "teamMembers": [],
+  "diagramType": "mermaid",
+  "humanInteractionTurns": 2,
+  "reviewerRounds": 1,
+  "notes": "Produce concise submission-ready English. Leave team member names and personal contributions blank or marked as To be filled. Keep every design decision traceable only to the provided drivers, concerns, and constraints."
+}

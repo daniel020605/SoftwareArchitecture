@@ -1,0 +1,42 @@
+### Assignment brief
+GET http://localhost:8080/api/add/brief
+Accept: application/json
+
+### Quick verification run
+POST http://localhost:8080/api/add/runs
+Content-Type: application/json
+
+{
+  "teamName": "",
+  "teamMembers": [],
+  "diagramType": "mermaid",
+  "humanInteractionTurns": 1,
+  "reviewerRounds": 1,
+  "notes": "Use concise English. Leave team member names and personal contributions blank or marked as To be filled."
+}
+
+### Submission-oriented Mermaid run
+POST http://localhost:8080/api/add/runs
+Content-Type: application/json
+
+{
+  "teamName": "",
+  "teamMembers": [],
+  "diagramType": "mermaid",
+  "humanInteractionTurns": 2,
+  "reviewerRounds": 1,
+  "notes": "Produce concise submission-ready English. Leave team member names and personal contributions blank or marked as To be filled. Keep every design decision traceable only to the provided drivers, concerns, and constraints."
+}
+
+### Submission-oriented PlantUML run
+POST http://localhost:8080/api/add/runs
+Content-Type: application/json
+
+{
+  "teamName": "",
+  "teamMembers": [],
+  "diagramType": "plantuml",
+  "humanInteractionTurns": 2,
+  "reviewerRounds": 1,
+  "notes": "Produce concise submission-ready English. Leave team member names and personal contributions blank or marked as To be filled. Use PlantUML for every view, and keep the iteration outputs aligned with the assignment appendix."
+}

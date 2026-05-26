@@ -1,0 +1,8 @@
+{
+  "teamName": "",
+  "teamMembers": [],
+  "diagramType": "plantuml",
+  "humanInteractionTurns": 2,
+  "reviewerRounds": 1,
+  "notes": "Produce concise submission-ready English. Leave team member names and personal contributions blank or marked as To be filled. Use PlantUML for every view, and keep the iteration outputs aligned with the assignment appendix."
+}
