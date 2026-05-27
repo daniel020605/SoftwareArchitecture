@@ -5,7 +5,7 @@ This file records the successful real execution used for the submission-ready dr
 ## Runtime
 
 - Date/time: 2026-05-25, Asia/Shanghai local time
-- Project directory: `/Users/liuxuejin/Desktop/Projects/Architecture/hotel-pricing-add`
+- Project directory: `.`
 - Environment source: `../env.sh`
 - Model: `qwen3-max`
 - Framework/client: Spring AI Alibaba DashScope native chat client
@@ -17,7 +17,7 @@ Note: `https://dashscope.aliyuncs.com/compatible-mode/v1` is the OpenAI-compatib
 ## Start Command
 
 ```bash
-cd /Users/liuxuejin/Desktop/Projects/Architecture/hotel-pricing-add
+cd .
 set -a
 source ../env.sh
 set +a

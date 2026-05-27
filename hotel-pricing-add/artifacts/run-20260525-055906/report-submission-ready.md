@@ -339,9 +339,9 @@ The assignment was completed using the multi-agent paradigm. The workflow separa
 
 ## Appendix A. Run Artifacts
 
-- Summary JSON: `/Users/liuxuejin/Desktop/Projects/Architecture/hotel-pricing-add/artifacts/run-20260525-055906/summary.json`
-- Original generated report: `/Users/liuxuejin/Desktop/Projects/Architecture/hotel-pricing-add/artifacts/run-20260525-055906/report.md`
-- Submission-ready report: `/Users/liuxuejin/Desktop/Projects/Architecture/hotel-pricing-add/artifacts/run-20260525-055906/report-submission-ready.md`
-- Conversation logs: `/Users/liuxuejin/Desktop/Projects/Architecture/hotel-pricing-add/artifacts/run-20260525-055906/conversations`
-- Iteration snapshots: `/Users/liuxuejin/Desktop/Projects/Architecture/hotel-pricing-add/artifacts/run-20260525-055906/iterations`
+- Summary JSON: `artifacts/run-20260525-055906/summary.json`
+- Original generated report: `artifacts/run-20260525-055906/report.md`
+- Submission-ready report: `artifacts/run-20260525-055906/report-submission-ready.md`
+- Conversation logs: `artifacts/run-20260525-055906/conversations/`
+- Iteration snapshots: `artifacts/run-20260525-055906/iterations/`
 - Recorded model turns: 24
