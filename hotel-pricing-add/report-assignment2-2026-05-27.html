@@ -1,0 +1,762 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Software Architecture (2026) Assignment 2 — Hotel Pricing System ADD Report</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --fg: #1f2328;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --code-bg: #f6f8fa;
+    --accent: #2563eb;
+    --info-bg: #eff6ff;    --info-bd: #93c5fd;
+    --warn-bg: #fffbeb;    --warn-bd: #fcd34d;
+    --danger-bg: #fef2f2;  --danger-bd: #fca5a5;
+    --success-bg: #f0fdf4; --success-bd: #86efac;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1117;
+      --fg: #e6edf3;
+      --muted: #8b949e;
+      --border: #30363d;
+      --code-bg: #161b22;
+      --accent: #58a6ff;
+      --info-bg: #0c2a4a;    --info-bd: #1e4a7a;
+      --warn-bg: #3a2e0a;    --warn-bd: #7a5c1e;
+      --danger-bg: #3a0f0f;  --danger-bd: #7a2222;
+      --success-bg: #0d2a18; --success-bd: #1e5a3a;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--fg); }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC",
+                 "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial,
+                 "Segoe UI", Roboto, sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  .layout { display: grid; grid-template-columns: 220px 1fr; max-width: 1200px; margin: 0 auto; }
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    nav.toc { position: static !important; border-right: 0; border-bottom: 1px solid var(--border); }
+  }
+  @media print {
+    .layout { display: block; }
+    nav.toc { display: none; }
+    main { padding: 0; max-width: 100%; }
+    h2 { page-break-before: auto; }
+    .mermaid { page-break-inside: avoid; }
+    table { page-break-inside: avoid; }
+  }
+  nav.toc {
+    position: sticky; top: 0; align-self: start;
+    height: 100vh; overflow-y: auto;
+    padding: 24px 12px;
+    border-right: 1px solid var(--border);
+    font-size: 13px;
+  }
+  nav.toc a { display: block; color: var(--muted); text-decoration: none; padding: 3px 0; }
+  nav.toc a:hover, nav.toc a.active { color: var(--accent); }
+  nav.toc .lv2 { padding-left: 12px; }
+  main { padding: 32px 40px; max-width: 860px; }
+  h1 { font-size: 26px; margin: 0 0 8px; }
+  h2 { font-size: 21px; margin: 40px 0 12px; padding-top: 8px; border-top: 1px solid var(--border); }
+  h3 { font-size: 17px; margin: 24px 0 8px; }
+  h4 { font-size: 15px; margin: 16px 0 6px; }
+  p { margin: 8px 0; }
+  .lead { color: var(--muted); font-size: 16px; margin-bottom: 24px; }
+  a { color: var(--accent); }
+  code {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+  pre {
+    position: relative;
+    background: var(--code-bg);
+    padding: 14px 16px;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 12px 0;
+  }
+  pre code { background: transparent; padding: 0; }
+  .copy-btn {
+    position: absolute; top: 8px; right: 8px;
+    background: var(--bg); color: var(--muted);
+    border: 1px solid var(--border); border-radius: 4px;
+    padding: 2px 8px; font-size: 12px; cursor: pointer;
+  }
+  .copy-btn:hover { color: var(--accent); }
+  table { border-collapse: collapse; margin: 16px 0; width: 100%; }
+  th, td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; vertical-align: top; }
+  th { background: var(--code-bg); font-weight: 600; }
+  blockquote { border-left: 4px solid var(--border); margin: 12px 0; padding: 4px 16px; color: var(--muted); }
+  .callout {
+    border-left: 4px solid; padding: 12px 16px; margin: 16px 0; border-radius: 4px;
+  }
+  .callout.info    { background: var(--info-bg);    border-color: var(--info-bd); }
+  .callout.warning { background: var(--warn-bg);    border-color: var(--warn-bd); }
+  .callout.danger  { background: var(--danger-bg);  border-color: var(--danger-bd); }
+  .callout.success { background: var(--success-bg); border-color: var(--success-bd); }
+  .callout .title { font-weight: 600; margin-bottom: 4px; }
+  details { border: 1px solid var(--border); border-radius: 4px; padding: 8px 12px; margin: 12px 0; }
+  details summary { cursor: pointer; font-weight: 500; }
+  .mermaid { text-align: center; margin: 16px 0; }
+  ul, ol { margin: 6px 0; padding-left: 24px; }
+  li { margin: 4px 0; }
+  .footer { margin-top: 60px; padding: 20px 0; color: var(--muted); font-size: 13px; border-top: 1px solid var(--border); }
+  .driver-tag { display: inline-block; background: var(--code-bg); border: 1px solid var(--border); border-radius: 3px; padding: 1px 6px; font-size: 0.85em; margin: 1px 2px; font-family: ui-monospace, monospace; }
+</style>
+</head>
+<body>
+<div class="layout">
+
+<nav class="toc" id="toc">
+  <strong>Contents</strong>
+</nav>
+
+<main>
+  <h1>Software Architecture (2026) Assignment 2</h1>
+  <p class="lead">Hotel Pricing System — Architectural Design using ADD 3.0 with Multi-Agent AI Paradigm</p>
+
+  <!-- ============ Metadata ============ -->
+  <h2 id="metadata">Project Metadata</h2>
+  <table>
+    <tbody>
+      <tr><th style="width:35%">Team Name</th><td>CloudArc</td></tr>
+      <tr><th>Team Members</th><td>Member_A, Member_B, Member_C</td></tr>
+      <tr><th>Assignment Selection</th><td>Option 3: Multi-agent (Distributed reasoning + Collaborative verification)</td></tr>
+      <tr><th>LLM Used</th><td>Qwen3-Max (via DashScope API)</td></tr>
+      <tr><th>Implementation Framework</th><td>Spring Boot 3.5 + Spring AI Alibaba 1.1.2</td></tr>
+      <tr><th>Programming Language</th><td>Java 21</td></tr>
+      <tr><th>Run ID</th><td><code>run-20260525-055906</code></td></tr>
+      <tr><th>Execution Date</th><td>2026-05-25, 05:59 – 06:15 UTC</td></tr>
+    </tbody>
+  </table>
+
+  <h3 id="meta-agents">Multi-Agent Workflow Design</h3>
+  <p>The system implements a five-role multi-agent pipeline for each ADD iteration. Each agent receives a dedicated system prompt with role-specific instructions, dialogue rules, and the shared prior knowledge bundle. The agents collaborate sequentially within each iteration:</p>
+  <table>
+    <thead><tr><th>#</th><th>Agent Role</th><th>Responsibility</th><th>ADD Steps Covered</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Requirements Analyst</td><td>Selects iteration drivers from the prior knowledge, frames the design scope, identifies candidate design concepts and ambiguities</td><td>Step 2, Step 3</td></tr>
+      <tr><td>2</td><td>Solution Architect</td><td>Proposes the architectural design: design concepts, element instantiation, interface definitions, and design decisions</td><td>Step 4, Step 5, Step 6</td></tr>
+      <tr><td>3</td><td>Quality Reviewer</td><td>Reviews the proposal for compliance with selected drivers and assignment constraints; flags violations and requests revisions</td><td>Collaborative verification</td></tr>
+      <tr><td>4</td><td>Solution Architect (revision)</td><td>Revises the design based on reviewer feedback, producing the final architectural output</td><td>Step 4, Step 5, Step 6 (revised)</td></tr>
+      <tr><td>5</td><td>Diagram Curator</td><td>Converts the approved architecture into a self-contained Mermaid diagram</td><td>Step 6 (view)</td></tr>
+      <tr><td>6</td><td>Iteration Moderator</td><td>Consolidates all agent outputs into a structured JSON result covering Steps 2–7</td><td>Step 7 + consolidation</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout info">
+    <div class="title">Key Design Principles</div>
+    <ul>
+      <li><strong>No external domain knowledge</strong>: all agents are constrained to use only the provided prior knowledge bundle (ADD 3.0 method, Hotel Pricing System case study, and the fixed iteration plan).</li>
+      <li><strong>No few-shot examples</strong>: no demonstration outputs are included in any prompt.</li>
+      <li><strong>Traceable decisions</strong>: every design decision must reference specific driver IDs (e.g., <code>QA-3</code>, <code>CON-6</code>) from the prior knowledge.</li>
+      <li><strong>Views in Mermaid code</strong>: all architectural views are produced as renderable Mermaid <code>flowchart</code> diagrams.</li>
+    </ul>
+  </div>
+
+  <!-- ============ Part 1: ADD Output ============ -->
+  <h2 id="part1">1. Output Results of ADD</h2>
+
+  <h3 id="step1">ADD Step 1: Review Inputs</h3>
+  <p>The design began by reviewing the complete prior knowledge bundle for the Hotel Pricing System. The system is a <strong>greenfield replacement</strong> of an existing system, and the design purpose is to make initial architectural decisions that support construction from scratch.</p>
+
+  <h4>Architectural Drivers Reviewed</h4>
+  <table>
+    <thead><tr><th>Category</th><th>ID</th><th>Summary</th></tr></thead>
+    <tbody>
+      <tr><td rowspan="6">Primary Functionality</td><td><code>HPS-1</code></td><td>Log In — credential validation against User Identity Service, authorized access to hotel data</td></tr>
+      <tr><td><code>HPS-2</code></td><td>Change Prices — select hotel/dates, change base or fixed rate, simulate before applying, publish to CMS</td></tr>
+      <tr><td><code>HPS-3</code></td><td>Query Prices — UI or API queries for prices of a given hotel</td></tr>
+      <tr><td><code>HPS-4</code></td><td>Manage Hotels — add/change/modify hotel info including tax rates, rates, room types</td></tr>
+      <tr><td><code>HPS-5</code></td><td>Manage Rates — add/change/modify rates and business rules for rate calculation</td></tr>
+      <tr><td><code>HPS-6</code></td><td>Manage Users — change permissions for a given user</td></tr>
+      <tr><td rowspan="9">Quality Attributes</td><td><code>QA-1</code></td><td>Performance: all prices published and query-ready in &lt;100 ms after base rate change</td></tr>
+      <tr><td><code>QA-2</code></td><td>Reliability: 100% of price changes must be published and received by CMS</td></tr>
+      <tr><td><code>QA-3</code></td><td>Availability: 99.9% uptime for pricing queries outside maintenance windows</td></tr>
+      <tr><td><code>QA-4</code></td><td>Scalability: 100K queries/day initially, scale to 1M without &gt;20% latency degradation</td></tr>
+      <tr><td><code>QA-5</code></td><td>Security: credentials validated via User Identity Service; users see only authorized functions</td></tr>
+      <tr><td><code>QA-6</code></td><td>Modifiability: add non-REST endpoint (e.g., gRPC) without changing core components</td></tr>
+      <tr><td><code>QA-7</code></td><td>Deployability: move between non-production environments without code changes</td></tr>
+      <tr><td><code>QA-8</code></td><td>Monitorability: collect 100% of performance and reliability measures for price publication</td></tr>
+      <tr><td><code>QA-9</code></td><td>Testability: 100% of system elements support integration testing independently of external systems</td></tr>
+      <tr><td rowspan="5">Concerns</td><td><code>CRN-1</code></td><td>Establish an overall initial system structure</td></tr>
+      <tr><td><code>CRN-2</code></td><td>Leverage the team's knowledge about Java, Angular, and Kafka</td></tr>
+      <tr><td><code>CRN-3</code></td><td>Allocate work to members of the development team</td></tr>
+      <tr><td><code>CRN-4</code></td><td>Avoid introducing technical debt</td></tr>
+      <tr><td><code>CRN-5</code></td><td>Set up a continuous deployment infrastructure</td></tr>
+      <tr><td rowspan="6">Constraints</td><td><code>CON-1</code></td><td>Users interact via web browser on multiple platforms and devices</td></tr>
+      <tr><td><code>CON-2</code></td><td>Manage users through cloud provider identity service; host in the cloud</td></tr>
+      <tr><td><code>CON-3</code></td><td>Code hosted on a proprietary Git-based platform</td></tr>
+      <tr><td><code>CON-4</code></td><td>Initial release in 6 months; MVP demonstrated within 2 months</td></tr>
+      <tr><td><code>CON-5</code></td><td>Initial integration through REST APIs; may later support other protocols</td></tr>
+      <tr><td><code>CON-6</code></td><td>Cloud-native approach should be favored</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Fixed Iteration Plan</h4>
+  <ol>
+    <li>Establishing an Overall System Structure</li>
+    <li>Identifying Structures to Support Primary Functionality</li>
+    <li>Addressing Reliability and Availability Quality Attributes</li>
+    <li>Addressing Development and Operations</li>
+  </ol>
+
+  <!-- ============ Iteration 1 ============ -->
+  <h3 id="iter1">Iteration 1: Establishing an Overall System Structure</h3>
+
+  <h4 id="iter1-step2">ADD Step 2 — Establish Iteration Goal by Selecting Drivers</h4>
+  <p>The selected drivers for this iteration were:</p>
+  <p>
+    <span class="driver-tag">CRN-1</span>
+    <span class="driver-tag">CON-6</span>
+    <span class="driver-tag">CON-2</span>
+    <span class="driver-tag">CON-5</span>
+    <span class="driver-tag">QA-5</span>
+    <span class="driver-tag">QA-3</span>
+    <span class="driver-tag">QA-4</span>
+  </p>
+  <p><strong>Iteration goal:</strong> Define the system context, identify major architectural containers (services or components), allocate high-level responsibilities among them, and specify initial interfaces — especially those related to user authentication, price querying, and integration with external systems — while adhering to cloud-native principles and REST-based interoperability.</p>
+  <p>These drivers shape the system boundaries (<code>CRN-1</code>), deployment model (<code>CON-6</code>), cloud identity integration (<code>CON-2</code>), REST-first interfaces (<code>CON-5</code>), security enforcement (<code>QA-5</code>), query availability (<code>QA-3</code> at 99.9%), and scalability (<code>QA-4</code> up to 1M queries/day).</p>
+
+  <h4 id="iter1-step3">ADD Step 3 — Choose Elements to Refine</h4>
+  <p>The elements refined in this iteration were:</p>
+  <ul>
+    <li>The <strong>system boundary</strong> with external actors: users (via browser), the User Identity Service, and the Channel Management System</li>
+    <li>Core <strong>internal containers</strong> realizing HPS-1 through HPS-6</li>
+    <li>Primary <strong>inbound/outbound interfaces</strong>: UI, query API, management APIs, and the price publication channel</li>
+    <li>Initial <strong>cloud-native deployment assumptions</strong></li>
+  </ul>
+
+  <h4 id="iter1-step4">ADD Step 4 — Choose Design Concepts</h4>
+  <p>The chosen design concepts were:</p>
+  <ul>
+    <li><strong>Cloud-native microservices architecture</strong> — functional decomposition into independently deployable services to satisfy <code>CON-6</code> and enable modifiability</li>
+    <li><strong>API Gateway pattern</strong> — a single public entry point for browser and API traffic, centralizing security and protocol handling</li>
+    <li><strong>Read-write separation</strong> — separating price query (read) from price update (write) paths to optimize performance (<code>QA-4</code>) and availability (<code>QA-3</code>)</li>
+    <li><strong>Externalized identity</strong> — delegating authentication to the cloud provider identity service per <code>CON-2</code></li>
+    <li><strong>Containerized stateless deployment units</strong> — enabling horizontal scaling and CI/CD readiness</li>
+  </ul>
+
+  <h4 id="iter1-step5">ADD Step 5 — Instantiate Elements, Allocate Responsibilities, Define Interfaces</h4>
+  <p>The main elements instantiated were:</p>
+  <table>
+    <thead><tr><th>Element</th><th>Responsibilities</th><th>Key Interfaces</th></tr></thead>
+    <tbody>
+      <tr><td>Web UI (Angular)</td><td>Browser-based user access, aligned with <code>CON-1</code> and <code>CRN-2</code></td><td>HTTPS to API Gateway</td></tr>
+      <tr><td>API Gateway</td><td>Routes incoming requests, coordinates identity validation, passes authorization context to backends</td><td>Inbound: REST from UI/external; Outbound: token validation to Identity Service</td></tr>
+      <tr><td>Hotel &amp; Rate Management Service</td><td>Owns hotel information, room types, tax rates, rate definitions, business rules, user permission mappings</td><td>REST APIs for hotels, rates, users; exposes <code>/authz/mappings</code></td></tr>
+      <tr><td>Price Update Service</td><td>Supports simulation, price changes, and publication initiation</td><td>Inbound: <code>/price-changes</code>; Outbound: async event to Price Query, publication to CMS</td></tr>
+      <tr><td>Price Query Service</td><td>Serves UI and external price queries with fast reads</td><td>Inbound: <code>/prices</code>; consumes price update events</td></tr>
+      <tr><td>User Identity Service (external)</td><td>Validates credentials, supports access control</td><td>Token validation API</td></tr>
+      <tr><td>Channel Management System (external)</td><td>Receives published final prices so external systems can query them</td><td>Price publication endpoint (REST)</td></tr>
+    </tbody>
+  </table>
+
+  <h4 id="iter1-step6">ADD Step 6 — Sketch Views and Record Design Decisions</h4>
+  <p><strong>Key decisions:</strong></p>
+  <ol>
+    <li>Use <strong>separate services</strong> for hotel/rate management, price update, and price query responsibilities — enabling independent scaling and modifiability</li>
+    <li>Place browser and external API access behind the <strong>API Gateway</strong> — centralizing security and protocol handling</li>
+    <li>Keep identity validation <strong>outside</strong> the Hotel Pricing System — use authorization context (user-to-hotel mappings) inside backend services</li>
+    <li>Separate <strong>price query from price update</strong> responsibilities so the query path can be scaled and kept available independently</li>
+    <li>Keep external integrations behind <strong>explicit interfaces</strong> so REST can be used first and future protocol additions remain possible (<code>CON-5</code>)</li>
+    <li><strong>Containerize all services</strong> as stateless units for cloud deployability and CI/CD readiness (<code>CON-6</code>)</li>
+  </ol>
+
+  <p><strong>Architectural view — System context and container decomposition:</strong></p>
+  <div class="mermaid">
+flowchart TD
+    User[User Browser] -->|HTTPS| WebUI[Web UI]
+    External[External API Client] -->|REST| Gateway[API Gateway]
+    WebUI -->|REST| Gateway
+    Gateway -->|Validate credentials and access| Identity[User Identity Service]
+    Gateway -->|Manage hotels, rates, users| HRM[Hotel and Rate Management Service]
+    Gateway -->|Query prices| PQ[Price Query Service]
+    Gateway -->|Change and publish prices| PU[Price Update Service]
+    HRM -->|Authorization mappings| Gateway
+    PU -->|Price update event| PQ
+    PU -->|Published final prices| CMS[Channel Management System]
+  </div>
+
+  <h4 id="iter1-step7">ADD Step 7 — Perform Analysis and Review</h4>
+  <p>The iteration achieved its goal by defining a traceable initial structure. All selected drivers are addressed:</p>
+  <ul>
+    <li><code>CRN-1</code>: overall structure is established with clear container boundaries</li>
+    <li><code>CON-6</code>: cloud-native containerized services</li>
+    <li><code>QA-3</code>/<code>QA-4</code>: read-write separation enables independent scaling of the query path</li>
+    <li><code>QA-5</code>: authentication delegated to external service, authorization enforced internally</li>
+  </ul>
+  <div class="callout warning">
+    <div class="title">Residual Risks</div>
+    <ul>
+      <li>Ambiguity in User Identity Service protocol may require adapter logic in API Gateway</li>
+      <li>Initial REST-based price publication to CMS may not meet 100% reliability (<code>QA-2</code>) — to be enhanced in Iteration 3</li>
+      <li>Scalability under peak concurrency not fully specified — mitigated by horizontal scaling design</li>
+      <li>Two-month MVP deadline (<code>CON-4</code>) may force deferral of simulation or advanced rate rules</li>
+      <li>Team allocation enabled by container boundaries but not yet mapped to personnel</li>
+    </ul>
+  </div>
+
+  <!-- ============ Iteration 2 ============ -->
+  <h3 id="iter2">Iteration 2: Identifying Structures to Support Primary Functionality</h3>
+
+  <h4 id="iter2-step2">ADD Step 2 — Establish Iteration Goal by Selecting Drivers</h4>
+  <p>
+    <span class="driver-tag">HPS-1</span>
+    <span class="driver-tag">HPS-2</span>
+    <span class="driver-tag">HPS-3</span>
+    <span class="driver-tag">HPS-4</span>
+    <span class="driver-tag">HPS-5</span>
+    <span class="driver-tag">HPS-6</span>
+    <span class="driver-tag">QA-1</span>
+    <span class="driver-tag">QA-5</span>
+    <span class="driver-tag">QA-6</span>
+  </p>
+  <p><strong>Iteration goal:</strong> Refine the internal structures of the microservices identified in Iteration 1 to directly support all six primary functional capabilities (HPS-1 through HPS-6), while ensuring compliance with performance (<code>QA-1</code>: sub-100ms price publication), security (<code>QA-5</code>: authorization via User Identity Service), and modifiability (<code>QA-6</code>: support for future non-REST query endpoints) requirements.</p>
+
+  <h4 id="iter2-step3">ADD Step 3 — Choose Elements to Refine</h4>
+  <p>The elements refined are the Hotel &amp; Rate Management Service (supporting <code>HPS-4</code>/<code>HPS-5</code>/<code>HPS-6</code>), Price Update Service (<code>HPS-2</code>), Price Query Service (<code>HPS-3</code>), and API Gateway (<code>HPS-1</code> coordination). The main focus areas are authorization context propagation, simulation input/output, price publication to CMS, and data ownership boundaries.</p>
+
+  <h4 id="iter2-step4">ADD Step 4 — Choose Design Concepts</h4>
+  <ul>
+    <li><strong>Read-write separation</strong> — separating read/write paths to optimize the price query path for performance</li>
+    <li><strong>Domain-aligned service boundaries</strong> — aligning services to functional domains so each owns its data</li>
+    <li><strong>Event-driven simulation workflow</strong> — side-effect-free preview before applying price changes (<code>HPS-2</code>)</li>
+    <li><strong>Adapter pattern for identity</strong> — abstracting the cloud identity protocol per <code>CON-2</code></li>
+    <li><strong>Protocol-agnostic query core</strong> — enabling REST/gRPC swappability for <code>QA-6</code></li>
+  </ul>
+
+  <h4 id="iter2-step5">ADD Step 5 — Instantiate Elements, Allocate Responsibilities, Define Interfaces</h4>
+  <table>
+    <thead><tr><th>Element</th><th>Functional Allocation</th><th>Key Behavior</th></tr></thead>
+    <tbody>
+      <tr><td>API Gateway</td><td><code>HPS-1</code></td><td>Handles cloud identity login flow; propagates <code>X-User-Id</code> and <code>X-Authorized-Hotels</code> headers to all backends</td></tr>
+      <tr><td>Hotel &amp; Rate Management Service</td><td><code>HPS-4</code>, <code>HPS-5</code>, <code>HPS-6</code></td><td>Owns hotel/rate/user metadata; provides authorization context to API Gateway; manages business rules for rate calculation</td></tr>
+      <tr><td>Price Update Service</td><td><code>HPS-2</code></td><td>Fetches rate rules once per hotel per session (cached in-memory); validates authorization per request; runs simulation before changes; initiates publication</td></tr>
+      <tr><td>Price Query Service</td><td><code>HPS-3</code></td><td>Validates hotel access per request; uses a protocol-agnostic core enabling future non-REST endpoints (<code>QA-6</code>)</td></tr>
+      <tr><td>Price Publisher Interface</td><td>CMS integration</td><td>Abstract interface hiding REST details; receives final prices after publication</td></tr>
+    </tbody>
+  </table>
+
+  <h4 id="iter2-step6">ADD Step 6 — Sketch Views and Record Design Decisions</h4>
+  <ol>
+    <li><strong>Synchronous fetch + in-memory cache</strong> for simulation data balances accuracy and MVP responsiveness (<code>CON-4</code>)</li>
+    <li><strong>Mandatory backend authorization checks</strong> in all services enforce <code>QA-5</code> via defense-in-depth — not just gateway-level checks</li>
+    <li><strong>Cloud identity redirect in API Gateway</strong> satisfies <code>HPS-1</code> under <code>CON-1</code> (browser) and <code>CON-2</code> (cloud identity)</li>
+    <li><strong>Protocol-agnostic query core</strong> with swappable endpoint adapters enables future gRPC addition without core changes (<code>QA-6</code>)</li>
+  </ol>
+
+  <div class="mermaid">
+flowchart TD
+    Gateway[API Gateway]
+    Identity[User Identity Service]
+    HRM[Hotel and Rate Management Service]
+    PU[Price Update Service]
+    PQ[Price Query Service]
+    CMS[Channel Management System]
+    QueryCore[Protocol-Independent Price Query Core]
+    RestQuery[REST Price Query Endpoint]
+    FutureQuery[Future Non-REST Query Endpoint]
+    Publisher[Price Publisher Interface]
+
+    Gateway -->|Login validation| Identity
+    Gateway -->|Hotel, rate, user management| HRM
+    Gateway -->|Price simulation and publication| PU
+    Gateway -->|Price query request| RestQuery
+    RestQuery --> QueryCore
+    FutureQuery -.-> QueryCore
+    PU -->|Fetch rate rules and room types| HRM
+    PU -->|Publish final prices| Publisher
+    Publisher -->|REST first| CMS
+    PU -->|Published price data| PQ
+    PQ --> QueryCore
+    HRM -->|Authorization context| Gateway
+  </div>
+
+  <h4 id="iter2-step7">ADD Step 7 — Perform Analysis and Review</h4>
+  <p>All six primary functions are assigned to concrete elements. <code>QA-1</code> is supported by cached simulation and async publication. <code>QA-5</code> is enforced end-to-end via header validation in all backends. <code>QA-6</code> is enabled by adapter-based endpoints.</p>
+  <div class="callout warning">
+    <div class="title">Residual Risks</div>
+    <ul>
+      <li>In-memory simulation cache may become stale if rate rules change mid-session — acceptable for MVP but requires refresh mechanism later</li>
+      <li>Duplication of authorization logic across services — mitigated by potential shared library</li>
+      <li>Price publication reliability (<code>QA-2</code>) remains abstract — will be addressed in Iteration 3</li>
+      <li>Login flow assumes the cloud provider identity protocol — adapter must handle alternatives if required</li>
+    </ul>
+  </div>
+
+  <!-- ============ Iteration 3 ============ -->
+  <h3 id="iter3">Iteration 3: Addressing Reliability and Availability Quality Attributes</h3>
+
+  <h4 id="iter3-step2">ADD Step 2 — Establish Iteration Goal by Selecting Drivers</h4>
+  <p>
+    <span class="driver-tag">QA-2</span>
+    <span class="driver-tag">QA-3</span>
+    <span class="driver-tag">QA-4</span>
+    <span class="driver-tag">QA-8</span>
+    <span class="driver-tag">QA-9</span>
+    <span class="driver-tag">CON-5</span>
+    <span class="driver-tag">CON-6</span>
+    <span class="driver-tag">CRN-4</span>
+  </p>
+  <p><strong>Iteration goal:</strong> Refine the existing microservice structure to concretely satisfy reliability (<code>QA-2</code>), availability (<code>QA-3</code>), scalability (<code>QA-4</code>), monitorability (<code>QA-8</code>), and testability (<code>QA-9</code>) requirements — without altering the high-level service boundaries or violating cloud-native (<code>CON-6</code>) and interoperability (<code>CON-5</code>) constraints established in Iterations 1 and 2.</p>
+
+  <h4 id="iter3-step3">ADD Step 3 — Choose Elements to Refine</h4>
+  <ul>
+    <li><strong>Price Update Service</strong> — simulation-to-publication workflow</li>
+    <li><strong>Price Query Service</strong> — resilience under load and failure</li>
+    <li><strong>Inter-service communication paths</strong> — event propagation, CMS integration</li>
+    <li><strong>Test seams and observability hooks</strong> across price change and query flows</li>
+  </ul>
+
+  <h4 id="iter3-step4">ADD Step 4 — Choose Design Concepts</h4>
+  <ul>
+    <li><strong>Acknowledged asynchronous publication</strong> — requires explicit CMS acknowledgment before marking delivery as successful (<code>QA-2</code>)</li>
+    <li><strong>Testable event emission</strong> — injectable <code>PriceChangeEventPublisher</code> interface with Kafka (runtime) and in-memory (test) implementations (<code>QA-9</code>)</li>
+    <li><strong>Stale-while-revalidate caching</strong> — Price Query Service continues serving available data during partial failures (<code>QA-3</code>)</li>
+    <li><strong>Explicit fallback telemetry</strong> — dedicated metric and structured log for every cache fallback event (<code>QA-8</code>)</li>
+    <li><strong>Horizontal scaling</strong> of stateless services for scalability (<code>QA-4</code>)</li>
+  </ul>
+
+  <h4 id="iter3-step5">ADD Step 5 — Instantiate Elements, Allocate Responsibilities, Define Interfaces</h4>
+  <table>
+    <thead><tr><th>Element</th><th>Responsibility</th><th>Interface</th></tr></thead>
+    <tbody>
+      <tr><td>Price Update Service</td><td>Validates change, runs simulation, applies final change, emits price change event</td><td>Publishes via <code>PriceChangeEventPublisher</code> interface</td></tr>
+      <tr><td>PriceChangeEventPublisher</td><td>Abstract event publication</td><td>Implementations: <code>KafkaPriceEventPublisher</code> (runtime), <code>InMemoryPriceEventPublisher</code> (test)</td></tr>
+      <tr><td>Price Publisher</td><td>Consumes events, calls CMS, retries on failure, marks success only after acknowledgment</td><td>Uses <code>CmsClient</code> interface</td></tr>
+      <tr><td>CmsClient / RestCmsAdapter</td><td>Hides REST integration details; returns success, failure, and receipt info</td><td>REST call to CMS, awaits HTTP 2xx + confirmation payload</td></tr>
+      <tr><td>Price Query Service</td><td>Serves queries; returns available data during partial failures (stale-while-revalidate)</td><td>Query cache → Persistent store (fallback)</td></tr>
+      <tr><td>Observability hooks</td><td>Collect publication latency, success/failure/retry counts, acknowledgment status, fallback events</td><td>Emits <code>price_query_cache_fallback_total</code> metric + structured logs</td></tr>
+      <tr><td>Test adapters</td><td>Replace external services during integration testing</td><td>In-memory implementations of event publisher and CMS client</td></tr>
+    </tbody>
+  </table>
+
+  <h4 id="iter3-step6">ADD Step 6 — Sketch Views and Record Design Decisions</h4>
+  <ol>
+    <li><strong>Require CMS acknowledgment</strong> (HTTP 2xx + confirmation payload) before marking price publication as successful — directly supporting <code>QA-2</code>'s "received by CMS" clause</li>
+    <li><strong>Abstract Kafka production behind interface</strong> with in-memory implementation for isolated integration testing — enabling full <code>QA-9</code> compliance</li>
+    <li><strong>Instrument cache fallbacks</strong> with a dedicated metric (<code>price_query_cache_fallback_total</code>) and structured logs — fulfilling <code>QA-8</code>'s 100% monitoring requirement</li>
+    <li><strong>Preserve all prior structural decisions</strong> to avoid architectural regression and technical debt (<code>CRN-4</code>)</li>
+  </ol>
+
+  <div class="mermaid">
+flowchart LR
+    Gateway[API Gateway]
+    PU[Price Update Service]
+    EventInterface[Price Change Event Publisher Interface]
+    Kafka[Kafka Price Change Topic]
+    TestPublisher[In-Memory Test Publisher]
+    Publisher[Price Publisher]
+    CmsClient[Channel Management Client Interface]
+    RestAdapter[REST Channel Management Adapter]
+    CMS[Channel Management System]
+    PQ[Price Query Service]
+    Store[Persistent Price Store]
+    Cache[Query Cache]
+    Obs[Metrics and Logs]
+
+    Gateway -->|POST price publication| PU
+    PU -->|publish event| EventInterface
+    EventInterface -->|runtime implementation| Kafka
+    EventInterface -.->|test implementation| TestPublisher
+    Kafka -->|consume event| Publisher
+    Publisher --> CmsClient
+    CmsClient --> RestAdapter
+    RestAdapter -->|send prices and wait for acknowledgement| CMS
+    Publisher -->|publication outcomes| Obs
+    Gateway -->|GET prices| PQ
+    PQ --> Cache
+    PQ --> Store
+    PQ -->|fallback events and query measures| Obs
+  </div>
+
+  <h4 id="iter3-step7">ADD Step 7 — Perform Analysis and Review</h4>
+  <div class="callout success">
+    <div class="title">Driver Satisfaction Summary</div>
+    <ul>
+      <li><code>QA-2</code> (Reliability): met via acknowledged delivery — publication is successful only after CMS confirms receipt</li>
+      <li><code>QA-3</code> (Availability): met via stale-while-revalidate — Price Query Service continues serving during partial failures</li>
+      <li><code>QA-4</code> (Scalability): met via stateless autoscaling of containerized services</li>
+      <li><code>QA-8</code> (Monitorability): met via new fallback metric and structured logs for 100% publication coverage</li>
+      <li><code>QA-9</code> (Testability): met via injectable interfaces for both CMS client and Kafka event publisher</li>
+    </ul>
+  </div>
+  <div class="callout warning">
+    <div class="title">Residual Risks</div>
+    <ul>
+      <li>CMS may return HTTP 2xx without internal persistence — mitigation requires strict confirmation payload validation</li>
+      <li>In-memory event publisher cannot simulate Kafka ordering/backpressure — acceptable for MVP</li>
+      <li>Cache fallback instrumentation reveals but does not correct stale prices — post-MVP event-driven invalidation needed</li>
+    </ul>
+  </div>
+
+  <!-- ============ Iteration 4 ============ -->
+  <h3 id="iter4">Iteration 4: Addressing Development and Operations</h3>
+
+  <h4 id="iter4-step2">ADD Step 2 — Establish Iteration Goal by Selecting Drivers</h4>
+  <p>
+    <span class="driver-tag">QA-7</span>
+    <span class="driver-tag">QA-8</span>
+    <span class="driver-tag">QA-9</span>
+    <span class="driver-tag">CRN-3</span>
+    <span class="driver-tag">CRN-5</span>
+    <span class="driver-tag">CON-3</span>
+    <span class="driver-tag">CON-4</span>
+    <span class="driver-tag">CON-6</span>
+  </p>
+  <p><strong>Iteration goal:</strong> Refine development, deployment, delivery, team allocation, and operational structures to concretely support the MVP (due in two months) and the six-month full release, while ensuring traceability to the selected drivers and preserving prior architectural decisions.</p>
+
+  <h4 id="iter4-step3">ADD Step 3 — Choose Elements to Refine</h4>
+  <ul>
+    <li><strong>Environment strategy</strong>: dev / test / staging / production</li>
+    <li><strong>Delivery pipeline</strong>: from source control through testing to deployment</li>
+    <li><strong>Team ownership boundaries</strong>: aligned to microservice components</li>
+    <li><strong>Operational support</strong>: logging, metrics, and health probes</li>
+  </ul>
+
+  <h4 id="iter4-step4">ADD Step 4 — Choose Design Concepts</h4>
+  <ul>
+    <li><strong>Declarative deployment</strong> using manifests stored in the proprietary Git platform — version-controlled and auditable (<code>CON-3</code>)</li>
+    <li><strong>CI/CD pipeline with quality gates</strong> — build, integration tests with in-memory adapters, promotion through environments (<code>CRN-5</code>)</li>
+    <li><strong>Component-based ownership</strong> — mapped to service boundaries from prior iterations (<code>CRN-3</code>)</li>
+    <li><strong>Cloud-native observability</strong> — structured logs and outcome-labeled operational metrics for price publication (<code>QA-8</code>)</li>
+  </ul>
+
+  <h4 id="iter4-step5">ADD Step 5 — Instantiate Elements, Allocate Responsibilities, Define Interfaces</h4>
+  <table>
+    <thead><tr><th>Element</th><th>Responsibility</th></tr></thead>
+    <tbody>
+      <tr><td>Proprietary Git Repository</td><td>Hosts application code, infrastructure definitions (<code>/infra</code>), and pipeline definitions (<code>/infra/ci</code>)</td></tr>
+      <tr><td>CI/CD Pipeline</td><td>Enforces build → unit test → integration test → package → deploy stages; gates promotion on test success</td></tr>
+      <tr><td>Environment Manifests</td><td>Define deployment settings per environment (dev/test/staging/prod) without code changes — satisfying <code>QA-7</code></td></tr>
+      <tr><td>Service Ownership Boundaries</td><td>Map work allocation to API Gateway, Hotel &amp; Rate Mgmt, Price Update, Price Query, and infrastructure responsibilities</td></tr>
+      <tr><td>Integration Test Stage</td><td>Runs tests with in-memory adapters for external dependencies (CMS, Kafka, Identity) — satisfying <code>QA-9</code></td></tr>
+      <tr><td>Observability Sidecar</td><td>Emits metrics (e.g., <code>price_publication_outcome{result=success|timeout|invalid}</code>) and structured logs</td></tr>
+    </tbody>
+  </table>
+
+  <h4 id="iter4-step6">ADD Step 6 — Sketch Views and Record Design Decisions</h4>
+  <ol>
+    <li><strong>Pipeline-as-code</strong> stored in Git under <code>/infra/ci</code> — satisfies <code>CON-3</code> and enables auditable, version-controlled deployments</li>
+    <li><strong>Outcome-labeled metrics</strong> and CMS response logging ensure 100% diagnostic coverage per <code>QA-8</code></li>
+    <li><strong>Ownership by component boundary</strong> (not named teams) — enables work allocation per <code>CRN-3</code> while respecting unknown team composition</li>
+    <li><strong>Integration tests with in-memory adapters</strong> for external dependencies — fulfills <code>QA-9</code>'s 100% independent testability</li>
+    <li><strong>Declarative environment manifests</strong> ensure no code changes between non-production environments — satisfying <code>QA-7</code></li>
+  </ol>
+
+  <div class="mermaid">
+graph LR
+    subgraph "Proprietary Git Platform (CON-3)"
+        A[Application Code] --> B[Infra Manifests: dev/test/staging/prod]
+        A --> C[CI/CD Pipeline Definition]
+    end
+
+    C --> D[CI/CD Pipeline]
+    D --> E[Build and Unit Test]
+    E --> F[Integration Test with in-memory adapters]
+    F --> G[Container Registry]
+    G --> H[Deploy to Dev]
+    H --> I[Deploy to Test]
+    I --> J[Deploy to Staging]
+    J --> K[Deploy to Prod]
+
+    subgraph "Cloud-Native Runtime (CON-6)"
+        L[API Gateway] --> M[Hotel and Rate Mgmt Service]
+        L --> N[Price Update Service]
+        L --> O[Price Query Service]
+    end
+
+    subgraph "Observability (QA-8)"
+        M --> T[Metrics and Logs]
+        N --> T
+        O --> T
+        T --> U[Central Monitoring System]
+    end
+
+    subgraph "Component Ownership (CRN-3)"
+        M -.-> V[Hotel and Rate Mgmt Owners]
+        N -.-> W[Price Update Owners]
+        O -.-> X[Price Query Owners]
+    end
+  </div>
+
+  <h4 id="iter4-step7">ADD Step 7 — Perform Analysis and Review</h4>
+  <p>The iteration achieved its development and operations goal with full traceability to all selected drivers. The design supports:</p>
+  <ul>
+    <li><strong>Deployability</strong> (<code>QA-7</code>): environment configuration without code changes</li>
+    <li><strong>Continuous deployment</strong> (<code>CRN-5</code>): pipeline-as-code with quality gates</li>
+    <li><strong>Testability</strong> (<code>QA-9</code>): replaceable external dependencies via in-memory adapters</li>
+    <li><strong>Monitorability</strong> (<code>QA-8</code>): outcome-labeled metrics and structured logs for price publication</li>
+    <li><strong>Work allocation</strong> (<code>CRN-3</code>): component-based ownership boundaries</li>
+    <li><strong>MVP feasibility</strong> (<code>CON-4</code>): two-month scope focused on price publication observability and independent testing</li>
+  </ul>
+  <div class="callout warning">
+    <div class="title">Residual Risks</div>
+    <ul>
+      <li>Proprietary Git platform may lack native CI/CD trigger support — may require external webhook-based tooling</li>
+      <li>If only one developer is available, component boundaries may not yield parallelism benefits</li>
+      <li>Company monitoring system may not natively ingest structured metrics — mitigated by deferring dashboard UI to post-MVP</li>
+      <li>Pressure from <code>CON-4</code> (MVP in 2 months) may lead to skipping integration tests — mitigated by defining MVP minimum</li>
+    </ul>
+  </div>
+
+  <!-- ============ Part 2: Interaction Cost ============ -->
+  <h2 id="part2">2. Interaction Cost Analysis</h2>
+  <p>The assignment was completed using the <strong>multi-agent paradigm</strong> (Option 3). The workflow separated the design activity into five specialized agent roles: Requirements Analyst, Solution Architect, Quality Reviewer, Diagram Curator, and Iteration Moderator. This created more model turns than a single-prompt approach, but provided explicit review checkpoints and made each iteration easier to trace to ADD steps and architectural drivers.</p>
+
+  <table>
+    <tbody>
+      <tr><th style="width:45%">The way of completing the assignment</th><td>C: Multi-agent</td></tr>
+      <tr><th>The LLM used</th><td>Qwen3-Max</td></tr>
+      <tr><th>Number of Human Interactions (turns)</th><td>2</td></tr>
+      <tr><th>Agent Turns</th><td>24 (6 per iteration &times; 4 iterations)</td></tr>
+      <tr><th>Token Consumption (K tokens)</th><td>123.37 (prompt: 92.12 + completion: 31.25)</td></tr>
+      <tr><th>Time Cost (min)</th><td>16.00</td></tr>
+    </tbody>
+  </table>
+
+  <h3 id="cost-breakdown">Per-Iteration Breakdown</h3>
+  <table>
+    <thead><tr><th>Iteration</th><th>Turns</th><th>Agent Sequence</th></tr></thead>
+    <tbody>
+      <tr><td>1. Overall System Structure</td><td>6</td><td>Analyst → Architect → Reviewer → Architect (revision) → Diagram Curator → Moderator</td></tr>
+      <tr><td>2. Primary Functionality</td><td>6</td><td>Analyst → Architect → Reviewer → Architect (revision) → Diagram Curator → Moderator</td></tr>
+      <tr><td>3. Reliability and Availability</td><td>6</td><td>Analyst → Architect → Reviewer → Architect (revision) → Diagram Curator → Moderator</td></tr>
+      <tr><td>4. Development and Operations</td><td>6</td><td>Analyst → Architect → Reviewer → Architect (revision) → Diagram Curator → Moderator</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout info">
+    <div class="title">Note on Human Interaction</div>
+    <p>Human interaction was limited to <strong>2 turns</strong>: one to configure and launch the workflow via an HTTP request, and one to validate the output artifacts after the run completed. All 24 agent turns were executed autonomously by the system without manual intervention.</p>
+  </div>
+
+  <!-- ============ Part 3: Reflection ============ -->
+  <h2 id="part3">3. Individual Reflection</h2>
+
+  <h3 id="problems">3.1 Problems Encountered and Solutions Adopted</h3>
+
+  <table>
+    <thead><tr><th style="width:5%">#</th><th style="width:40%">Problem</th><th>Solution Adopted</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><strong>External knowledge leakage:</strong> Some model outputs used named technologies or pattern labels (e.g., specific protocol names, design pattern labels) that were more specific than what appears in the assignment's prior knowledge bundle.</td>
+        <td>The final report was reviewed and conservative wording was used so that design decisions remained grounded in the provided drivers, constraints, and concerns. The prompt's dialogue rules were also strengthened to instruct agents to describe responsibilities generically when a named pattern is absent from the prior knowledge.</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><strong>Invalid Mermaid syntax:</strong> The original generated diagram output included component-diagram syntax that was not standard Mermaid graph syntax and would not render correctly in standard tools.</td>
+        <td>The final submission version preserves the same architectural content but rewrites all diagrams as valid <code>flowchart TD</code> or <code>flowchart LR</code> diagrams that render correctly in Mermaid.</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><strong>Cross-iteration consistency:</strong> Four ADD iterations can become architecturally inconsistent if each round is treated independently, since later decisions may contradict or ignore earlier ones.</td>
+        <td>The workflow passed prior iteration summaries (including key decisions, selected drivers, and residual risks) into later agent turns so that each round refined the previous decisions instead of restarting the design from scratch.</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td><strong>Auditability of multi-agent output:</strong> The multi-agent process produced many intermediate responses (24 agent turns total), making it difficult to verify that the final consolidated result accurately represents the discussion.</td>
+        <td>The application archived full conversation logs (with timestamps, system prompts, user prompts, and model responses for every turn), structured iteration JSON snapshots, and a generated report so the result can be audited against the actual run.</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td><strong>Driver pre-selection bias:</strong> Early versions of the code included suggested driver lists in the prompt, which could bias the model toward pre-selected drivers rather than independently selecting from the prior knowledge.</td>
+        <td>The suggested driver candidates were removed from the analyst prompt. The agent now independently selects iteration drivers grounded solely in the prior knowledge bundle, which better demonstrates the model's ability to reason about architectural concerns.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 id="contributions">3.2 Personal Contributions to the Group Work</h3>
+  <table>
+    <thead><tr><th style="width:25%">Name (Chinese)</th><th>Contributions</th></tr></thead>
+    <tbody>
+      <tr><td>Member_A</td><td>Designed and implemented the multi-agent workflow architecture using Spring AI Alibaba, including agent role definitions, prompt engineering for all five roles (Requirements Analyst, Solution Architect, Quality Reviewer, Diagram Curator, Iteration Moderator), and the iterative ADD pipeline orchestration. Configured the LLM integration with Qwen3-Max via DashScope.</td></tr>
+      <tr><td>Member_B</td><td>Developed the artifact generation system (conversation logs, iteration snapshots, summary JSON, and report composer). Prepared the prior knowledge bundle and verified alignment with assignment constraints. Performed the real execution run and validated output completeness.</td></tr>
+      <tr><td>Member_C</td><td>Authored the submission report following the Appendix template, reviewed all four iterations for ADD step coverage and driver traceability, rewrote Mermaid diagrams into valid flowchart syntax, and conducted the final compliance check against assignment rules.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ============ Appendix ============ -->
+  <h2 id="appendix">Appendix A. Run Artifacts</h2>
+  <table>
+    <thead><tr><th>Artifact</th><th>Path</th></tr></thead>
+    <tbody>
+      <tr><td>Summary JSON</td><td><code>artifacts/run-20260525-055906/summary.json</code></td></tr>
+      <tr><td>Original generated report</td><td><code>artifacts/run-20260525-055906/report.md</code></td></tr>
+      <tr><td>Submission-ready report (Markdown)</td><td><code>artifacts/run-20260525-055906/report-submission-ready.md</code></td></tr>
+      <tr><td>Conversation logs</td><td><code>artifacts/run-20260525-055906/conversations/</code></td></tr>
+      <tr><td>Iteration snapshots</td><td><code>artifacts/run-20260525-055906/iterations/</code></td></tr>
+    </tbody>
+  </table>
+  <p>Recorded model turns: <strong>24</strong> (full logs with timestamps, system prompts, user prompts, and model responses are available in the conversation logs directory).</p>
+
+  <div class="footer">
+    Last updated: 2026-05-27 &middot; Team CloudArc &middot; Software Architecture (2026) Assignment 2
+  </div>
+</main>
+
+</div>
+
+<!-- Mermaid CDN -->
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  mermaid.initialize({ startOnLoad: true, theme: dark ? 'dark' : 'default' });
+</script>
+
+<!-- Auto-generate TOC + code copy buttons + active-section highlight -->
+<script>
+(function () {
+  const toc = document.getElementById('toc');
+  const main = document.querySelector('main');
+  const heads = main.querySelectorAll('h2[id], h3[id]');
+  heads.forEach(h => {
+    const a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent;
+    if (h.tagName === 'H3') a.classList.add('lv2');
+    toc.appendChild(a);
+  });
+  document.querySelectorAll('pre').forEach(pre => {
+    const btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = 'Copy';
+    btn.onclick = async () => {
+      await navigator.clipboard.writeText(pre.innerText.replace(/^Copy\n?/, ''));
+      btn.textContent = 'Copied';
+      setTimeout(() => btn.textContent = 'Copy', 1500);
+    };
+    pre.appendChild(btn);
+  });
+  const links = toc.querySelectorAll('a');
+  const map = new Map();
+  links.forEach(a => map.set(a.getAttribute('href').slice(1), a));
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const a = map.get(e.target.id);
+        if (a) a.classList.add('active');
+      }
+    });
+  }, { rootMargin: '0px 0px -70% 0px' });
+  heads.forEach(h => io.observe(h));
+})();
+</script>
+
+</body>
+</html>
