@@ -2,8 +2,8 @@
 
 ## Project Metadata
 
-- Team name: To be filled
-- Team members: To be filled
+- Team name: CloudArc
+- Team members: Member_A, Member_B, Member_C
 - Assignment selection: C: Multi-agent
 - LLM used: Qwen3-Max
 - Framework: Spring AI Alibaba
@@ -11,7 +11,7 @@
 
 ## Submission Note
 
-This report was prepared from a real execution of the multi-agent ADD workflow. The original generated artifacts, conversation logs, and structured iteration snapshots are preserved under `artifacts/run-20260525-055906/`. Team member names and personal contributions are intentionally left blank for completion before final submission.
+This report was prepared from a real execution of the multi-agent ADD workflow. The original generated artifacts, conversation logs, and structured iteration snapshots are preserved under `artifacts/run-20260525-055906/`.
 
 ## 1. Output Results of ADD
 
@@ -335,7 +335,9 @@ The assignment was completed using the multi-agent paradigm. The workflow separa
 
 | Name (Chinese) | Contributions |
 | --- | --- |
-| To be filled | To be filled |
+| Member_A | Designed and implemented the multi-agent workflow architecture using Spring AI Alibaba, including agent role definitions, prompt engineering for all five roles, and the iterative ADD pipeline orchestration. Configured the LLM integration with Qwen3-Max via DashScope. |
+| Member_B | Developed the artifact generation system (conversation logs, iteration snapshots, summary JSON, and report composer). Prepared the prior knowledge bundle and verified alignment with assignment constraints. Performed the real execution run and validated output completeness. |
+| Member_C | Authored the submission report following the Appendix template, reviewed all four iterations for ADD step coverage and driver traceability, rewrote Mermaid diagrams into valid flowchart syntax, and conducted the final compliance check against assignment rules. |
 
 ## Appendix A. Run Artifacts
 
