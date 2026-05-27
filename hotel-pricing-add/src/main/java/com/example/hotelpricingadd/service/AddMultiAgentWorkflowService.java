@@ -111,7 +111,7 @@ public class AddMultiAgentWorkflowService {
                 definition.number(),
                 fallback(result.iterationTitle(), definition.title()),
                 fallback(result.iterationGoal(), definition.focus()),
-                safeList(result.selectedDrivers(), definition.suggestedDrivers()),
+                safeList(result.selectedDrivers(), List.of("No drivers were extracted by the model.")),
                 fallback(result.addStep2(), "Not provided by the model."),
                 fallback(result.addStep3(), "Not provided by the model."),
                 fallback(result.addStep4(), "Not provided by the model."),

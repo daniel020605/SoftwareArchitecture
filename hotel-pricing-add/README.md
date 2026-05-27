@@ -98,10 +98,10 @@ curl -X POST http://localhost:8080/api/add/runs \
 
 Additional request packs:
 
-- [docs/request-examples.md](/Users/liuxuejin/Desktop/Projects/Architecture/hotel-pricing-add/docs/request-examples.md)
-- [examples/real-run-requests.http](/Users/liuxuejin/Desktop/Projects/Architecture/hotel-pricing-add/examples/real-run-requests.http)
-- [examples/request-bodies/submission-mermaid.json](/Users/liuxuejin/Desktop/Projects/Architecture/hotel-pricing-add/examples/request-bodies/submission-mermaid.json)
-- [examples/request-bodies/submission-plantuml.json](/Users/liuxuejin/Desktop/Projects/Architecture/hotel-pricing-add/examples/request-bodies/submission-plantuml.json)
+- [docs/request-examples.md](docs/request-examples.md)
+- [examples/real-run-requests.http](examples/real-run-requests.http)
+- [examples/request-bodies/submission-mermaid.json](examples/request-bodies/submission-mermaid.json)
+- [examples/request-bodies/submission-plantuml.json](examples/request-bodies/submission-plantuml.json)
 
 ## 7. Output artifacts
 
@@ -145,5 +145,5 @@ The test suite verifies:
 
 ## 9. Submission helpers
 
-- Report draft: [docs/submission-report-draft.md](/Users/liuxuejin/Desktop/Projects/Architecture/hotel-pricing-add/docs/submission-report-draft.md)
-- Real request guide: [docs/request-examples.md](/Users/liuxuejin/Desktop/Projects/Architecture/hotel-pricing-add/docs/request-examples.md)
+- Report draft: [docs/submission-report-draft.md](docs/submission-report-draft.md)
+- Real request guide: [docs/request-examples.md](docs/request-examples.md)

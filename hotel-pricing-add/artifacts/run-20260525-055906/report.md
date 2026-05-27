@@ -390,8 +390,8 @@ Replace or refine the points above so they reflect the actual issues your group 
 
 ## Appendix A. Run Artifacts
 
-- Summary JSON: /Users/liuxuejin/Desktop/Projects/Architecture/hotel-pricing-add/artifacts/run-20260525-055906/summary.json
-- Conversation logs: /Users/liuxuejin/Desktop/Projects/Architecture/hotel-pricing-add/artifacts/run-20260525-055906/conversations
-- Iteration snapshots: /Users/liuxuejin/Desktop/Projects/Architecture/hotel-pricing-add/artifacts/run-20260525-055906/iterations
-- Detailed report file: /Users/liuxuejin/Desktop/Projects/Architecture/hotel-pricing-add/artifacts/run-20260525-055906/report.md
+- Summary JSON: artifacts/run-20260525-055906/summary.json
+- Conversation logs: artifacts/run-20260525-055906/conversations/
+- Iteration snapshots: artifacts/run-20260525-055906/iterations/
+- Detailed report file: artifacts/run-20260525-055906/report.md
 - Recorded model turns: 24

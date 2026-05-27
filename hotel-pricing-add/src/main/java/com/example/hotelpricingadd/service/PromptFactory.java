@@ -54,9 +54,6 @@ public class PromptFactory {
                         Iteration focus:
                         %s
 
-                        Suggested driver candidates:
-                        %s
-
                         Expected outputs:
                         %s
 
@@ -70,7 +67,6 @@ public class PromptFactory {
                         %s
                         """.formatted(
                         iteration.focus(),
-                        joinList(iteration.suggestedDrivers()),
                         joinList(iteration.expectedOutputs()),
                         historyContext(history),
                         teamContext(request),
@@ -95,7 +91,7 @@ public class PromptFactory {
 
                         Dialogue rules:
                         - Use only the prior knowledge bundle and the analyst's output.
-                        - You may reference Java, Angular, Kafka, REST, cloud provider identity service, proprietary Git platform, and cloud-native deployment because they appear in the prior knowledge bundle.
+                        - You may reference technologies and systems that are explicitly named in the prior knowledge bundle (such as those mentioned in constraints and architectural concerns).
                         - Do not cite external standards, products, protocol names, infrastructure products, or pattern names that are absent from the prior knowledge.
                         - When a concept is needed but a named pattern is not present in the prior knowledge, describe the responsibility generically.
                         - Make reasoning explicit enough for later review.
